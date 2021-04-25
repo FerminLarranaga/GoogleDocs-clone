@@ -7,7 +7,7 @@ console.log('Hi')
 // Import socket.io and connect it to the clien side
 const io = require('socket.io')(process.env.PORT || 3001, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: 'https://googledocs-clone-client.herokuapp.com',
         methods: ['GET', 'POST'],
     },
 })
