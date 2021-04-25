@@ -4,8 +4,12 @@ const storage = require('./firebase').storage;
 
 console.log('Hi')
 
+const expressApp = require('express')()
+    .use((req, res) => res.send("Its working"))
+    .listen(process.env.PORT || 3001)
+
 // Import socket.io and connect it to the clien side
-const io = require('socket.io')(process.env.PORT || 3001, {
+const io = require('socket.io')(expressApp, {
     cors: {
         origin: 'https://googledocs-clone-client.herokuapp.com',
         methods: ['GET', 'POST'],
