@@ -3,7 +3,7 @@ const auth = require('./firebase').auth;
 const storage = require('./firebase').storage;
 
 // Import socket.io and connect it to the clien side
-const io = require('socket.io')(3001, {
+const io = require('socket.io')(process.env.PORT || 3001, {
     cors: {
         origin: 'http://localhost:3000',
         methods: ['GET', 'POST'],
