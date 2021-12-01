@@ -1,14 +1,10 @@
 const db = require('./firebase').db;
-const auth = require('./firebase').auth;
-const storage = require('./firebase').storage;
-
-console.log('Hi')
 
 const expressApp = require('express')()
     .use((req, res) => res.send("Its working"))
     .listen(process.env.PORT || 3001)
 
-// Import socket.io and connect it to the clien side
+// Conectar socket.io al lado del cliente
 const io = require('socket.io')(expressApp, {
     cors: {
         origin: 'https://googledocs-clone-client.herokuapp.com',
@@ -17,18 +13,18 @@ const io = require('socket.io')(expressApp, {
 })
 
 io.on('connection', socket => {
-    // Get documentId from the client
+    // Obtener doc desde el cliente
     socket.on('get-document', async documentId => {
-        // Get doc content of create a new doc fi it doesn't exist
+        // Obtener el contenido del doc o crear uno nuevo si no existe
         const data = await GetDocument(documentId);
-        // Join the client only with the ones that are working in the same doc
+        // Juntar en una misma "sala" a aquellos clientes con el mismo documentId
         socket.join(documentId);
-        // Send the doc content to the client
+        // Enviar el contenido del doc al cliente
         socket.emit('load-document', data);
 
-        // When the connection with the client is done, wait until the client fires the send-changes func to the server
+        // Ejecutar cuando el cliente realiza algun cambio
         socket.on('send-changes', delta => {
-            // When the changes have been sent, fire the recieve-changes to all the clients except from the one that has made the changes
+            // Cuando se recibieron los cambios, enviarlos a los demas clientes
             socket.broadcast.to(documentId).emit('recieve-changes', delta);
         });
 
@@ -36,6 +32,7 @@ io.on('connection', socket => {
     })
 });
 
+// Obtener doc de la base de datos
 async function GetDocument(documentId) {
     const document = await db.collection('docs').doc(documentId).get();
     
